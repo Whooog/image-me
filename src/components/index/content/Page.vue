@@ -9,7 +9,6 @@ export default {
   name: "page",
   data(){
     return {
-      showCount: 5,
       totalPage: 0,
       pages: []
     }
@@ -27,7 +26,8 @@ export default {
   props: {
     currentPage: Number,
     pageSize: Number,
-    totalSize: Number
+    totalSize: Number,
+    showCount: Number
   },
   computed: {
     activeClass: function(page) {
