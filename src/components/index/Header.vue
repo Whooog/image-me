@@ -40,7 +40,6 @@ export default {
     // text: String
   },
   created: function() {
-      console.log('初始化头部')
   }
 };
 </script>

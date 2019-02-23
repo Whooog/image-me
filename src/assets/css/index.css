@@ -173,10 +173,12 @@ a {
     margin-left: 35px;
     color: #808080;
     height: 0px;
+    cursor: pointer;
 }
 
-#active {
-    color: #eb5055;
+.active {
+    color: #eb5055 !important;
+    pointer-events:none;
 }
 
 #footer {
