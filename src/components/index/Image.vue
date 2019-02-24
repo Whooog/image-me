@@ -1,68 +1,95 @@
 <template>
   <div id="image">
-     <vue-waterfall-easy 
+    <!--<vue-waterfall-easy
       :imgsArr="images"
       @scrollReachBottom="init"
-      />
+      :height="600"
+      :reachBottomDistance="100"
+    />-->
+    <waterfall
+      :line-gap="400"
+      :align="center"
+      :watch="images"
+    >
+      <waterfall-slot
+        v-for="(item, index) in images"
+        :width="item.width"
+        :height="item.height"
+        :order="index"
+        :key="item.id">
+        <img :src="item.src" width="100%" height="100%"/>
+      </waterfall-slot>
+    </waterfall>
   </div>
 </template>
 
 <style>
-  #image{
-    height: 100%;
+  #image {
+    margin-bottom: 220px;
   }
 </style>
 
 <script>
-import vueWaterfallEasy from 'vue-waterfall-easy'
-export default {
-  name: "image",
-  components: {
-    'vue-waterfall-easy': vueWaterfallEasy
-  },
-  data() {
-    return {
-      images:[],
-      page:1
-    };
-  },
-  methods:{
-    openPullDown:function() {
+  // import vueWaterfallEasy from 'vue-waterfall-easy'
+  import  Waterfall from 'vue-waterfall/lib/waterfall'
+  import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot'
+  export default {
+    name: "image",
+    components: {
+      // 'vue-waterfall-easy': vueWaterfallEasy
+      Waterfall,
+      WaterfallSlot
     },
-    init:function(){
-      var api = "http://api.talei.me:8080/api/image/getAllByCategory";
-      this.$http.get(api,{
-        params:{
-            categoryId: 2,
+    data() {
+      return {
+        images: [],
+        categoryId: 0,
+        page: 1,
+      };
+    },
+    methods: {
+      handleScroll(e){
+        console.log(e);
+      },
+      init: function () {
+       const api = "http://api.talei.me:8080/api/image/getAllByCategory";
+        this.$http.get(api, {
+          params: {
+            categoryId: this.categoryId,
             page: this.page,
-            size: 10
-        }
-      })
-      .then((res) => {
-        console.log('page++之前'+this.page);
-        this.page+=1;
-        console.log('page++之后'+this.page);
-        // console.log(res.data);
-        res.data.forEach(element => {
-              // console.log(element);
-              this.images.push({
-                src:element.url,
-                info:element.description
-              })
-        });
-        
-        // let img = {
-          // "src": src,
-          // "info": description
-        // }
-      }).catch((err) => {
-        console.log(err);
-      });
-    }
+            size: 20
+          }
+        })
+        .then((res) => {
+          this.page += 1;
+          res.data.forEach(element => {
+            let img = new Image();
+            img.src = element.url;
+            img.onload = () => {
+              console.log(element.url);
+              console.log(img.width);
+              console.log(img.height)
 
-  },
-  created(){
-    this.init();
-  }
-};
+              this.images.push({
+                id: element.id,
+                src: element.url,
+                width: img.width / 5,
+                height: img.height / 5,
+                info: element.description
+              })
+            }
+          });
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
+    },
+    watch:{
+
+    },
+    created() {
+      this.categoryId = this.$route.query.categoryId
+      this.init();
+    }
+  };
 </script>
